@@ -8,8 +8,8 @@ export type HeroData = {
   subtitle?: string;
   ctaText?: string;
   ctaHref?: string;
-  bgColor?: string;   // color de fondo opcional desde Sanity
-  imageUrl?: string;  // imagen opcional desde Sanity
+  bgColor?: string;
+  imageUrl?: string; // URL absoluta de Sanity (cdn.sanity.io)
 };
 
 export default function Hero({ data }: { data?: HeroData }) {
@@ -55,15 +55,16 @@ export default function Hero({ data }: { data?: HeroData }) {
         {ctaText}
       </a>
 
-      {/* Imagen opcional desde Sanity */}
+      {/* Imagen opcional desde Sanity (Next/Image) */}
       {imageUrl && (
-        <div className="mt-10">
-          {/* Usa <img> para no tocar next.config ahora.
-             Si luego quieres Next/Image, añade el dominio de Sanity a images.remotePatterns */}
-          <img
+        <div className="mt-10 relative w-full max-w-5xl h-[380px] mx-auto">
+          <Image
             src={imageUrl}
-            alt={title}
-            className="mx-auto max-h-[380px] object-contain"
+            alt={title || "Hero image"}
+            fill
+            className="object-contain"
+            sizes="(max-width: 768px) 100vw, 1024px"
+            priority
           />
         </div>
       )}
