@@ -8,8 +8,8 @@ export type HeroData = {
   subtitle?: string;
   ctaText?: string;
   ctaHref?: string;
-  bgColor?: string;
-  imageUrl?: string; // URL absoluta de Sanity (cdn.sanity.io)
+  bgColor?: string;   // color desde Sanity (opcional)
+  imageUrl?: string;  // URL absoluta (cdn.sanity.io)
 };
 
 export default function Hero({ data }: { data?: HeroData }) {
@@ -19,55 +19,72 @@ export default function Hero({ data }: { data?: HeroData }) {
   const subtitle = data?.subtitle ?? "Cocina con mimo. Reserva ya.";
   const ctaText  = data?.ctaText  ?? "Reservar";
   const ctaHref  = data?.ctaHref  ?? "/reservas";
-  const bg       = data?.bgColor  ?? "transparent";
+  const bg       = data?.bgColor  ?? ""; // si no hay color, usamos gradiente
   const imageUrl = data?.imageUrl;
 
   return (
     <section
-      className="py-20 text-center flex flex-col items-center"
-      style={{ background: bg }}
+      className="relative py-20 md:py-28 overflow-hidden"
+      style={bg ? { background: bg } : {}}
     >
-      {/* LOGO */}
-      <div className="mb-6">
-        <Image
-          src={brand.logo}
-          alt={`${brand.name} logo`}
-          width={160}
-          height={60}
-          priority
+      {/* Gradiente decorativo cuando no hay color desde Sanity */}
+      {!bg && (
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 bg-gradient-to-b from-brand-50/80 to-white"
         />
-      </div>
+      )}
 
-      {/* TÍTULO */}
-      <h1 className="text-5xl font-bold" style={{ fontFamily: t.heading }}>
-        {title}
-      </h1>
-
-      {/* SUBTÍTULO */}
-      <p className="mt-3 text-lg">{subtitle}</p>
-
-      {/* BOTÓN */}
-      <a
-        className="inline-block mt-6 px-6 py-3 rounded-lg text-white"
-        style={{ background: t.primary, borderRadius: t.radius }}
-        href={ctaHref}
-      >
-        {ctaText}
-      </a>
-
-      {/* Imagen opcional desde Sanity (Next/Image) */}
-      {imageUrl && (
-        <div className="mt-10 relative w-full max-w-5xl h-[380px] mx-auto">
+      <div className="container-page relative">
+        {/* Logo */}
+        <div className="mb-6 flex justify-center">
           <Image
-            src={imageUrl}
-            alt={title || "Hero image"}
-            fill
-            className="object-contain"
-            sizes="(max-width: 768px) 100vw, 1024px"
+            src={brand.logo}
+            alt={`${brand.name} logo`}
+            width={150}
+            height={56}
             priority
           />
         </div>
-      )}
+
+        {/* Texto */}
+        <div className="mx-auto max-w-prose text-center">
+          <h1
+            className="text-4xl md:text-6xl font-extrabold leading-[1.1]"
+            style={{ fontFamily: "var(--font-heading), serif" }}
+          >
+            {title}
+          </h1>
+
+          <p className="mt-4 text-lg md:text-xl text-slate-700">
+            {subtitle}
+          </p>
+
+          <div className="mt-8">
+            <a
+              href={ctaHref}
+              className="btn-primary"
+              style={{ borderRadius: t.radius }}
+            >
+              {ctaText}
+            </a>
+          </div>
+        </div>
+
+        {/* Imagen opcional */}
+        {imageUrl && (
+          <div className="mt-12 md:mt-16 relative mx-auto h-[320px] w-full max-w-5xl">
+            <Image
+              src={imageUrl}
+              alt={title || "Hero image"}
+              fill
+              className="object-contain"
+              sizes="(max-width: 768px) 100vw, 1024px"
+              priority
+            />
+          </div>
+        )}
+      </div>
     </section>
   );
 }
